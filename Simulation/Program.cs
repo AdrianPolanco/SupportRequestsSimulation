@@ -10,9 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var connectionString = builder.Environment.IsDevelopment()
-    ? builder.Configuration["Database:ConnectionString"]
-    : Environment.GetEnvironmentVariable("Database__ConnectionString");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (connectionString is null)
 {
@@ -21,7 +19,12 @@ if (connectionString is null)
 
 builder.Services.AddDbContext<SupportDbContext>(options =>
 {
-    options.UseNpgsql(connectionString);
+    if(builder.Environment.IsProduction())
+    {
+        options.UseSqlServer(connectionString);
+    }else{
+        options.UseNpgsql(connectionString);
+    }
 });
 builder.Services.AddScoped<SupportService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
