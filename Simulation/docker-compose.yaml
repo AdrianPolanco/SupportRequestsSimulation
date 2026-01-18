@@ -1,0 +1,22 @@
+﻿services:
+  support-db:
+    image: 'postgres:16'
+    container_name: 'support-db'
+    environment:
+      POSTGRES_DB: 'support_db'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: '123456'
+    ports:
+      - '5433:5432'
+    volumes:
+      - support-db-volume:/var/lib/postgresql/data
+    networks:
+      - support
+
+volumes:
+  support-db-volume:
+
+networks:
+  support:
+    driver: bridge
+  
